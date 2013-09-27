@@ -1,3 +1,13 @@
+
+
+
+---------------- DEPRECATED
+
+
+
+
+
+
 -- Shamelessly adapted from queue_classic
 
 DROP FUNCTION IF EXISTS public.pop_lock(name varchar);
