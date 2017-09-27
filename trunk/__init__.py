@@ -148,6 +148,8 @@ class Trunk(object):
         if not block:
             timeout = 0
         while True:
+            with self.cursor() as cursor:
+                pass
             for notify in self.conn.notifies:
                 if channel and notify.channel != channel:
                     continue
