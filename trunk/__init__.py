@@ -41,8 +41,9 @@ class LoggingCursor(psycopg2.extensions.cursor):
             start = perf_counter()
             res = super(LoggingCursor, self).execute(query, vars)
             duration = (perf_counter() - start) * 1000  # ms
-            begin_tran = old_tran_status == 0 \
-                         and self.connection.get_transaction_status() != 0
+            begin_tran = (
+                old_tran_status == 0 and
+                self.connection.get_transaction_status() != 0)
             return res
         finally:
             if begin_tran:
@@ -103,7 +104,7 @@ class Trunk(object):
         for _ in range(3):
             connection = LoggingConnection(*args, **kwargs)
             save_autocommit = connection.autocommit
-            connection.autocommit = True  # don't start a transaction implicitly
+            connection.autocommit = True  # don't start a transaction
             cursor = connection.cursor()  # type: psycopg2.extensions.cursor
             cursor.execute("SELECT pg_is_in_recovery()")
             is_ro = cursor.fetchone()

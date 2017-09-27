@@ -5,7 +5,9 @@ except ImportError:
     from urlparse import urlunparse  # noqa
 
 
-def build_dsn(scheme='postgres', hostname='localhost', port=5432, path='', username=None, password=None):
+def build_dsn(
+        scheme='postgres', hostname='localhost', port=5432,
+        path='', username=None, password=None):
     netloc = hostname or 'localhost'
     if port:
         netloc = "{0}:{1}".format(netloc, port)
@@ -16,7 +18,9 @@ def build_dsn(scheme='postgres', hostname='localhost', port=5432, path='', usern
     return urlunparse((scheme, netloc, path, None, None, None))
 
 
-def retry(func, attempts=3, sleep_sec=1, exception_class=Exception, onerror=None):
+def retry(
+        func, attempts=3, sleep_sec=1,
+        exception_class=Exception, onerror=None):
     from time import sleep
 
     while True:
