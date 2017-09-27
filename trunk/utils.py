@@ -30,3 +30,25 @@ def retry(func, attempts=3, sleep_sec=1, exception_class=Exception, onerror=None
                 onerror(ex)
 
             sleep(sleep_sec)
+
+
+def call_retry(
+        attempts=5, sleep_sec=1,
+        exception_class=Exception, onerror=None):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            timeout = sleep_sec
+            counter = attempts
+            while True:
+                try:
+                    return func(*args, **kwargs)
+                except exception_class as ex:
+                    counter -= 1
+                    if counter < 1:
+                        raise
+                    if onerror is not None:
+                        onerror(ex)
+                    sleep(timeout)
+                    timeout *= 2
+        return wrapper
+    return decorator

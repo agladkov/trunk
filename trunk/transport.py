@@ -2,7 +2,7 @@
 from kombu.transport import virtual
 
 from trunk.queue import PGQueue
-from trunk.utils import build_dsn, retry
+from trunk.utils import build_dsn
 
 import logging
 
@@ -21,18 +21,17 @@ class Channel(virtual.Channel):
         self.queue = PGQueue(dsn)
 
     def _new_queue(self, queue, **kwargs):
-        retry(lambda: self.queue.create(queue), onerror=logger.warning)
+        self.queue.create(queue)
 
     def _get(self, queue, timeout=None):
         _, message = self.queue.get_nowait(queue)
         return message
 
     def _put(self, queue, message, **kwargs):
-        retry(lambda: self.queue.put(queue, message),
-              onerror=logger.warning)
+        self.queue.put(queue, message)
 
     def _purge(self, queue):
-        return retry(lambda: self.queue.purge(queue), onerror=logger.warning)
+        return self.queue.purge(queue)
 
     def close(self):
         super(Channel, self).close()

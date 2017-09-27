@@ -7,7 +7,7 @@ import psycopg2.extras
 from contextlib import contextmanager
 import logging
 from datetime import datetime
-from trunk.utils import retry
+from trunk.utils import call_retry
 import sys
 
 import time
@@ -91,6 +91,7 @@ class Trunk(object):
         self.conn.autocommit = True
 
     @staticmethod
+    @call_retry(onerror=logger.warning)
     def connect(dsn):
         return psycopg2.connect(dsn=dsn,
                                 connection_factory=Trunk._conn_factory,
@@ -122,10 +123,11 @@ class Trunk(object):
             cursor.execute("SELECT 'ping'")
         except:
             try:
-                self.conn = retry(lambda: self.connect(self._dsn))
+                self.conn = self.connect(self._dsn)
                 self.conn.autocommit = True
                 cursor = self.conn.cursor()
-            except Exception:
+            except Exception as e:
+                logger.exception(e)
                 raise
 
         try:
