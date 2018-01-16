@@ -1,4 +1,6 @@
 # -*- coding: utf-8  -*-
+from time import sleep
+
 try:
     from urllib.parse import urlunparse
 except ImportError:
@@ -21,8 +23,6 @@ def build_dsn(
 def retry(
         func, attempts=3, sleep_sec=1,
         exception_class=Exception, onerror=None):
-    from time import sleep
-
     while True:
         try:
             return func()
