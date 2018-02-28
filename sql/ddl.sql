@@ -46,7 +46,9 @@ BEGIN
         || ' IS NULL OR (message#>>'
         || quote_literal('{headers,eta}')
         || ')::TIMESTAMP WITH TIME ZONE < NOW())'
-        || ' ORDER BY id ASC'
+        || ' ORDER BY (message#>>'
+        || quote_literal('{properties,priority}')
+        || ')::integer DESC, id ASC'
         || ' LIMIT 1'
         || ' OFFSET ' || quote_literal(relative_top)
         || ' FOR UPDATE NOWAIT'
