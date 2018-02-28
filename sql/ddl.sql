@@ -18,6 +18,11 @@ BEGIN
     || '(SELECT * FROM public.trunk_queue WHERE name = '
     || quote_literal(name)
     || ' AND locked_at IS NULL'
+    || ' AND (message#>>'
+    || quote_literal('{headers,eta}')
+    || ' IS NULL OR (message#>>'
+    || quote_literal('{headers,eta}')
+    || ')::TIMESTAMP WITH TIME ZONE < NOW())'
     || ' LIMIT '
     || quote_literal(boundary)
     || ') limited'
@@ -36,6 +41,11 @@ BEGIN
         || ' WHERE locked_at IS NULL'
         || ' AND name = '
         || quote_literal(name)
+        || ' AND (message#>>'
+        || quote_literal('{headers,eta}')
+        || ' IS NULL OR (message#>>'
+        || quote_literal('{headers,eta}')
+        || ')::TIMESTAMP WITH TIME ZONE < NOW())'
         || ' ORDER BY id ASC'
         || ' LIMIT 1'
         || ' OFFSET ' || quote_literal(relative_top)
